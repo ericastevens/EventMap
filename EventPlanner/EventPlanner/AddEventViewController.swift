@@ -117,7 +117,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         tf.returnKeyType = .done
         tf.textAlignment = .center
         //still implementing the selector in the target action method below
-        //        tf.addTarget(self, action: #selector(AddEventViewController.eventNameEntered), for: .editingDidEndOnExit)
+        tf.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEndOnExit)
         return tf
     }()
     
@@ -125,6 +125,8 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         if textField == enterEventNameTextField {
             self.eventName = textField.text!
             print("EVENTNAME: \(self.eventName)")
+        } else {
+            print("EVENT NAME NOT CAPTURED!")
         }
         
     }
@@ -316,7 +318,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
                     newEvent.address = self.eventAddress
                     newEvent.latitude = self.latitude
                     newEvent.longitude = self.longitude
-                    newEvent.event = self.eventName
+                    newEvent.event = self.eventName //returning empty string
                     newEvent.city = self.eventCity
                     newEvent.type = self.eventType
                     

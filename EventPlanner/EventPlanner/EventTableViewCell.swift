@@ -67,6 +67,7 @@ class EventTableViewCell: UITableViewCell {
         label.backgroundColor = .lightGray
         label.textColor = .white
         label.layer.cornerRadius = 0.5 * label.bounds.size.width
+//        label.layer.contentEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         label.clipsToBounds = true
         label.numberOfLines = 0
         return label
@@ -106,6 +107,8 @@ class EventTableViewCell: UITableViewCell {
         
         
         self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+        self.heightAnchor.constraint(equalToConstant: 175)
+        self.layoutSubviews()
         //        toggleDirectionsButton.addTarget(self, action: #selector(EventViewController.toggleDirectionsButtonPressed(sender:)), for: .touchUpInside)
     }
     
@@ -218,10 +221,12 @@ class EventTableViewCell: UITableViewCell {
             //event name label constraints
             eventNameLabel.topAnchor.constraint(equalTo: eventStartLabel.bottomAnchor, constant: 8.0),
             eventNameLabel.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
+            //eventNameLabel.heightAnchor.constraint(equalToConstant: 30),
             
             //event address label constraints
             eventAddressLabel.topAnchor.constraint(equalTo: eventNameLabel.bottomAnchor, constant: 8.0),
             eventAddressLabel.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
+            //eventAddressLabel.heightAnchor.constraint(equalToConstant: 50),
             
             // event end label constraints
             eventEndLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8.0),
@@ -236,8 +241,8 @@ class EventTableViewCell: UITableViewCell {
             //directions button constraints
             toggleDirectionsButton.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
             toggleDirectionsButton.topAnchor.constraint(equalTo: eventAddressLabel.bottomAnchor, constant: -8.0),
-            toggleDirectionsButton.centerXAnchor.constraint(equalTo: eventAddressLabel.centerXAnchor),
-            toggleDirectionsButton.heightAnchor.constraint(equalToConstant: 30),
+            toggleDirectionsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8.0),
+            toggleDirectionsButton.heightAnchor.constraint(equalToConstant: 25),
             toggleDirectionsButton.widthAnchor.constraint(equalTo: eventAddressLabel.widthAnchor)
             ].map { $0.isActive = true }
     }

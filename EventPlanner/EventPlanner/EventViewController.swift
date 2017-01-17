@@ -12,6 +12,18 @@ import UIKit
 import CoreData
 import CoreLocation
 import MapKit
+import FZAccordionTableView
+
+protocol FZAccordionTableViewDelegate: NSObjectProtocol {
+    
+    func tableView(_ tableView: FZAccordionTableView, canInteractWithHeaderAtSection section: Int) -> Bool
+    func tableView(_ tableView: FZAccordionTableView, willOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?)
+    func tableView(_ tableView: FZAccordionTableView, didOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?)
+    
+    func tableView(_ tableView: FZAccordionTableView, willCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?)
+    func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?)
+    
+}
 
 class EventViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NSFetchedResultsControllerDelegate, CLLocationManagerDelegate, MKMapViewDelegate {
     
@@ -58,10 +70,11 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     let eventCell = EventTableViewCell()
     
     // Tableview
-    lazy var tableView: UITableView = {
-        let tb = UITableView()
-        tb.translatesAutoresizingMaskIntoConstraints = false
-        return tb
+    lazy var tableView: FZAccordionTableView = {
+        let tb = FZAccordionTableView(allowsMultipleSectionsOpen: false, keepOneSectionOpen: false, initialOpenSection: nil, enableAnimationFix: true, frame: CGRect.init(x: 0.0, y: 0.0, width: self.view.bounds.size.width, height: self.view.bounds.size.height * 0.6), style: UITableViewStyle.plain)
+        tb?.translatesAutoresizingMaskIntoConstraints = false
+        return tb!
+       
     }()
     let cellIdentifier = "eventCellIdentifier"
     
@@ -79,8 +92,10 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //toggleDirectionsButtonIsSelected = false
+       
         
+        //toggleDirectionsButtonIsSelected = false
+        tableView.register(UINib(nibName: "AccordionHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: AccordionHeaderView.accordionHeaderViewReuseIdentifier)
         
         // Setup delegate method
         self.tableView.delegate = self
@@ -106,7 +121,14 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         // TableView Register Cell
         self.tableView.register(EventTableViewCell.self, forCellReuseIdentifier: "EventCell")
-        tableView.rowHeight = 175
+        //originally 175
+        tableView.rowHeight = UITableViewAutomaticDimension
+        //tableView.isSectionOpen(0)
+        
+        tableView.estimatedRowHeight = 175
+        
+        
+  
         
         // Nav Bar Button Item (add event)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
@@ -128,6 +150,11 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         
     }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+    {
+        return 175//Choose your custom row height
+    }
+
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
@@ -235,7 +262,9 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     // MARK: - TableView Delegate Methods
     
     func numberOfSections(in tableView: UITableView) -> Int {
+        
         if let sections = controller.sections {
+//            tableView.
             return sections.count
         }
         return 0
@@ -244,6 +273,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     var didAddTodaysEvents = false
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        let section = tableView.
         mapView.removeAnnotations(mapView.annotations)
         if let sections = controller.sections {
             let info = sections[section]
@@ -296,7 +326,6 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             }
             //}
             //Trying to have pins per day populate on mapView
-            
             return rowCountInSection
             
         }
@@ -317,6 +346,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //}
     }
     
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "EventCell", for: indexPath) as! EventTableViewCell
         
@@ -499,30 +529,66 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return cell
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        guard let sectionInfo = controller.sections?[section] else { fatalError() }
+//       // let accordionHeader =
+//        //        if let sections = controller.sections {
+//        //            let info = sections[section]
+//        //            let rowCountInSection = info.numberOfObjects
+//        //
+//        //            //print("ROWS: \(rowCountInSection) IN SECTION: \(info.name)")
+//        //            //dump("OBJECTS: \(info.objects as? [Event])")
+//        //            if let eventsArr = info.objects as? [Event] {
+//        //                for event in eventsArr {
+//        //                    dump("EVENT: \(event)")
+//        //                }
+//        //            }
+//        let eventQuantityPerDay = sectionInfo.numberOfObjects
+//        switch eventQuantityPerDay {
+//        case eventQuantityPerDay where eventQuantityPerDay > 1:
+//           // AccordionHeaderView.headerLabelText = "\(eventQuantityPerDay) Events on \(sectionInfo.name)"
+//            return "\(eventQuantityPerDay) Events on \(sectionInfo.name)"
+//        case eventQuantityPerDay where eventQuantityPerDay == 1:
+//            //AccordionHeaderView.headerLabelText = "\(eventQuantityPerDay) Event on \(sectionInfo.name)"
+//            return "\(eventQuantityPerDay) Event on \(sectionInfo.name)"
+//        default:
+//            return sectionInfo.name
+//        }
+//        
+//    }
+    
+   
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return AccordionHeaderView.defaultAccordionHeaderViewHeight
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.tableView(tableView, heightForRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+        return self.tableView(tableView, heightForHeaderInSection:section)
+    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let sectionInfo = controller.sections?[section] else { fatalError() }
-        //        if let sections = controller.sections {
-        //            let info = sections[section]
-        //            let rowCountInSection = info.numberOfObjects
-        //
-        //            //print("ROWS: \(rowCountInSection) IN SECTION: \(info.name)")
-        //            //dump("OBJECTS: \(info.objects as? [Event])")
-        //            if let eventsArr = info.objects as? [Event] {
-        //                for event in eventsArr {
-        //                    dump("EVENT: \(event)")
-        //                }
-        //            }
-        let eventQuantityPerDay = sectionInfo.numberOfObjects
-        switch eventQuantityPerDay {
-        case eventQuantityPerDay where eventQuantityPerDay > 1:
-            return "\(eventQuantityPerDay) Events on \(sectionInfo.name)"
-        case eventQuantityPerDay where eventQuantityPerDay == 1:
-            return "\(eventQuantityPerDay) Event on \(sectionInfo.name)"
+        guard let accordionHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: AccordionHeaderView.accordionHeaderViewReuseIdentifier) as? FZAccordionTableViewHeaderView
+            else { return nil }
+        let rowsInSection = sectionInfo.numberOfObjects
+        let accordionSectionHeader = accordionHeaderView as? AccordionHeaderView
+        switch rowsInSection {
+        case rowsInSection where rowsInSection > 1:
+            accordionSectionHeader?.sectionHeaderLabel.text = "\(rowsInSection) Events on \(sectionInfo.name)"
+        case rowsInSection where rowsInSection == 1:
+            accordionSectionHeader?.sectionHeaderLabel.text = "\(rowsInSection) Event on \(sectionInfo.name)"
         default:
-            return sectionInfo.name
+            accordionSectionHeader?.sectionHeaderLabel.text = ""
+            
         }
         
+        return accordionHeaderView
     }
+    
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
@@ -750,5 +816,34 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             
             return circleOverlayRenderer
         }
+    }
+    
+    
+}
+
+// MARK: - <FZAccordionTableViewDelegate> -
+
+extension EventViewController: FZAccordionTableViewDelegate {
+    
+    
+    
+    @nonobjc func tableView(_ tableView: FZAccordionTableView, willOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        print("IS SECTION OPEN: \(tableView.isSectionOpen(section))")
+    }
+    
+    @nonobjc func tableView(_ tableView: FZAccordionTableView, didOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        
+    }
+    
+    @nonobjc func tableView(_ tableView: FZAccordionTableView, willCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        
+    }
+    
+    @nonobjc func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        
+    }
+    
+    @nonobjc func tableView(_ tableView: FZAccordionTableView, canInteractWithHeaderAtSection section: Int) -> Bool {
+        return true
     }
 }

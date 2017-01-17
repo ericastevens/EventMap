@@ -1,0 +1,12 @@
+PODS:
+  - FZAccordionTableView (0.2.3)
+
+DEPENDENCIES:
+  - FZAccordionTableView (~> 0.2.3)
+
+SPEC CHECKSUMS:
+  FZAccordionTableView: e64f49c71c32d750feda14025b088bcd25d1a71f
+
+PODFILE CHECKSUM: baca98004f493b34ce1f41775e9c5f585eadd232
+
+COCOAPODS: 1.1.1
