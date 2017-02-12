@@ -71,9 +71,9 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     // Tableview
     lazy var tableView: FZAccordionTableView = {
-        let tb = FZAccordionTableView(allowsMultipleSectionsOpen: false, keepOneSectionOpen: false, initialOpenSection: nil, enableAnimationFix: true, frame: CGRect.init(x: 0.0, y: 0.0, width: self.view.bounds.size.width, height: self.view.bounds.size.height * 0.6), style: UITableViewStyle.plain)
-        tb?.translatesAutoresizingMaskIntoConstraints = false
-        return tb!
+        let tb = FZAccordionTableView()
+        tb.translatesAutoresizingMaskIntoConstraints = false
+        return tb
        
     }()
     let cellIdentifier = "eventCellIdentifier"
@@ -95,7 +95,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
        
         
         //toggleDirectionsButtonIsSelected = false
-        tableView.register(UINib(nibName: "AccordionHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: AccordionHeaderView.accordionHeaderViewReuseIdentifier)
+        tableView.register(UINib(nibName: "AccordionHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: FZAccordionTableViewHeaderView.accordionHeaderViewReuseIdentifier)
         
         // Setup delegate method
         self.tableView.delegate = self
@@ -560,7 +560,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
    
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return AccordionHeaderView.defaultAccordionHeaderViewHeight
+        return FZAccordionTableViewHeaderView.defaultAccordionHeaderViewHeight
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -571,22 +571,30 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return self.tableView(tableView, heightForHeaderInSection:section)
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let sectionInfo = controller.sections?[section] else { fatalError() }
-        guard let accordionHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: AccordionHeaderView.accordionHeaderViewReuseIdentifier) as? FZAccordionTableViewHeaderView
-            else { return nil }
-        let rowsInSection = sectionInfo.numberOfObjects
-        let accordionSectionHeader = accordionHeaderView as? AccordionHeaderView
-        switch rowsInSection {
-        case rowsInSection where rowsInSection > 1:
-            accordionSectionHeader?.sectionHeaderLabel.text = "\(rowsInSection) Events on \(sectionInfo.name)"
-        case rowsInSection where rowsInSection == 1:
-            accordionSectionHeader?.sectionHeaderLabel.text = "\(rowsInSection) Event on \(sectionInfo.name)"
-        default:
-            accordionSectionHeader?.sectionHeaderLabel.text = ""
+//        guard let sectionInfo = controller.sections?[section] else { fatalError() }
+//        guard let accordionHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: FZAccordionTableViewHeaderView.accordionHeaderViewReuseIdentifier) as? FZAccordionTableViewHeaderView
+//            else { return nil }
+//        let rowsInSection = sectionInfo.numberOfObjects
+//        let accordionSectionHeader = accordionHeaderView as? AccordionHeaderView
+//        switch rowsInSection {
+//        case rowsInSection where rowsInSection > 1:
+//            accordionSectionHeader?.sectionHeaderLabel.text = "\(rowsInSection) Events on \(sectionInfo.name)"
+//        case rowsInSection where rowsInSection == 1:
+//            accordionSectionHeader?.sectionHeaderLabel.text = "\(rowsInSection) Event on \(sectionInfo.name)"
+//        default:
+//            accordionSectionHeader?.sectionHeaderLabel.text = ""
+//            
+//        }
+//        
+//        return accordionHeaderView as? UIView
+        var headerView: FZAccordionTableViewHeaderView? = nil
+        if self.tableView.subclassDelegate.responds(to: #selector(UITableViewDelegate.tableView(_:viewForHeaderInSection:))) {
+            headerView = (self.tableView.subclassDelegate.tableView!(tableView, viewForHeaderInSection: section) as? FZAccordionTableViewHeaderView)
+            
+            headerView?.delegate = self.tableView
             
         }
-        
-        return accordionHeaderView
+        return headerView! 
     }
     
     

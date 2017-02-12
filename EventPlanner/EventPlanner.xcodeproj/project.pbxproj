@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3AA224021E2D1412006BD806 /* AccordionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA224011E2D1412006BD806 /* AccordionHeaderView.swift */; };
+		3AA224021E2D1412006BD806 /* FZAccordionTableViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA224011E2D1412006BD806 /* FZAccordionTableViewHeaderView.swift */; };
 		3AA224091E2D1650006BD806 /* AccordionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3AA224081E2D1650006BD806 /* AccordionHeaderView.xib */; };
 		3AA2240E1E2D6E75006BD806 /* FZAccordionTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA2240D1E2D6E75006BD806 /* FZAccordionTableView.swift */; };
+		3AA224101E2DF206006BD806 /* FZAccordionTableViewSectionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA2240F1E2DF205006BD806 /* FZAccordionTableViewSectionInfo.swift */; };
+		3AA224121E2DF279006BD806 /* FZAccordionTableViewDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA224111E2DF279006BD806 /* FZAccordionTableViewDelegateProxy.swift */; };
 		3AAD61011E2CA6B0006A8970 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAD61001E2CA6B0006A8970 /* AppDelegate.swift */; };
 		3AAD61091E2CA6B0006A8970 /* EventPlanner.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3AAD61071E2CA6B0006A8970 /* EventPlanner.xcdatamodeld */; };
 		3AAD610B1E2CA6B0006A8970 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3AAD610A1E2CA6B0006A8970 /* Assets.xcassets */; };
@@ -25,9 +27,11 @@
 
 /* Begin PBXFileReference section */
 		0D31F7F7FD88288D7F9A5C66 /* Pods-EventPlanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EventPlanner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EventPlanner/Pods-EventPlanner.debug.xcconfig"; sourceTree = "<group>"; };
-		3AA224011E2D1412006BD806 /* AccordionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccordionHeaderView.swift; sourceTree = "<group>"; };
+		3AA224011E2D1412006BD806 /* FZAccordionTableViewHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FZAccordionTableViewHeaderView.swift; sourceTree = "<group>"; };
 		3AA224081E2D1650006BD806 /* AccordionHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccordionHeaderView.xib; sourceTree = "<group>"; };
 		3AA2240D1E2D6E75006BD806 /* FZAccordionTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FZAccordionTableView.swift; sourceTree = "<group>"; };
+		3AA2240F1E2DF205006BD806 /* FZAccordionTableViewSectionInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FZAccordionTableViewSectionInfo.swift; sourceTree = "<group>"; };
+		3AA224111E2DF279006BD806 /* FZAccordionTableViewDelegateProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FZAccordionTableViewDelegateProxy.swift; sourceTree = "<group>"; };
 		3AAD60FD1E2CA6B0006A8970 /* EventPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EventPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AAD61001E2CA6B0006A8970 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3AAD61081E2CA6B0006A8970 /* EventPlanner.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EventPlanner.xcdatamodel; sourceTree = "<group>"; };
@@ -67,8 +71,10 @@
 		3AAD60F41E2CA6B0006A8970 = {
 			isa = PBXGroup;
 			children = (
-				3AA224011E2D1412006BD806 /* AccordionHeaderView.swift */,
+				3AA224111E2DF279006BD806 /* FZAccordionTableViewDelegateProxy.swift */,
 				3AA2240D1E2D6E75006BD806 /* FZAccordionTableView.swift */,
+				3AA224011E2D1412006BD806 /* FZAccordionTableViewHeaderView.swift */,
+				3AA2240F1E2DF205006BD806 /* FZAccordionTableViewSectionInfo.swift */,
 				3AA224081E2D1650006BD806 /* AccordionHeaderView.xib */,
 				3AAD60FF1E2CA6B0006A8970 /* EventPlanner */,
 				3AAD60FE1E2CA6B0006A8970 /* Products */,
@@ -270,13 +276,15 @@
 				3AAD61011E2CA6B0006A8970 /* AppDelegate.swift in Sources */,
 				3AAD611E1E2CA94E006A8970 /* AddEventViewController.swift in Sources */,
 				3AAD611A1E2CA8C7006A8970 /* EventViewController.swift in Sources */,
+				3AA224101E2DF206006BD806 /* FZAccordionTableViewSectionInfo.swift in Sources */,
+				3AA224121E2DF279006BD806 /* FZAccordionTableViewDelegateProxy.swift in Sources */,
 				3AAD611C1E2CA91A006A8970 /* EventLocationSearchTableViewController.swift in Sources */,
 				3AAD61211E2CA98E006A8970 /* EventTableViewCell.swift in Sources */,
 				3AAD61091E2CA6B0006A8970 /* EventPlanner.xcdatamodeld in Sources */,
 				3AAD61231E2CA9B3006A8970 /* EventType.swift in Sources */,
 				3AAD61181E2CA899006A8970 /* Event+Additions.swift in Sources */,
 				3AA2240E1E2D6E75006BD806 /* FZAccordionTableView.swift in Sources */,
-				3AA224021E2D1412006BD806 /* AccordionHeaderView.swift in Sources */,
+				3AA224021E2D1412006BD806 /* FZAccordionTableViewHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
