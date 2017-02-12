@@ -296,6 +296,8 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
     
     
     func doneButtonPressed() {
+        
+     
         //ok/save event action button pressed
         //check for empty values before saving to context
         if (self.enterStartTextField.text?.characters.count)! > 0 &&
@@ -352,12 +354,14 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
                         fatalError("Failure to save context: \(error)")
                     }
                 }
+                
             }
             catch let error {
                 print(error)
             }
             
             DispatchQueue.main.async {
+                
                 _ = self.navigationController?.popViewController(animated: true)
             }
             

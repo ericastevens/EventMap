@@ -135,67 +135,6 @@ class EventTableViewCell: UITableViewCell {
     
     var showDirections = false
     
-    //    var isExpanded:Bool = false
-    //        {
-    //        didSet
-    //        {
-    //            if !isExpanded {
-    //                self.removeConstraints(self.constraints)
-    //                addSubviewConstraints()
-    //
-    //            } else {
-    //                self.removeConstraints(self.constraints)
-    //                addSubviewConstraintsForExpandedCell()
-    //            }
-    //        }
-    //    }
-    //    func addSubviewConstraintsForExpandedCell() {
-    //        //Cell Constraints
-    //        _ = [
-    //            //Add card view constraints
-    //            view.heightAnchor.constraint(equalToConstant: 157.5),
-    //            view.widthAnchor.constraint(equalTo: self.contentView.widthAnchor, multiplier: 0.9),
-    //            view.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
-    //
-    //            //add event start time label constraints
-    //            eventStartLabel.topAnchor.constraint(equalTo: view.topAnchor),
-    //            eventStartLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-    //            eventStartLabel.widthAnchor.constraint(equalTo: view.widthAnchor),
-    //            eventStartLabel.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25),
-    //
-    //            //mapViewConstraints
-    //            eventMapView.heightAnchor.constraint(equalToConstant: 80),
-    //            eventMapView.widthAnchor.constraint(equalToConstant: 80),
-    //            eventMapView.topAnchor.constraint(equalTo: eventStartLabel.bottomAnchor, constant: 16.0),
-    //            eventMapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8.0),
-    //
-    //
-    //            //event name label constraints
-    //            eventNameLabel.topAnchor.constraint(equalTo: eventStartLabel.bottomAnchor, constant: 8.0),
-    //            eventNameLabel.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
-    //
-    //            //event address label constraints
-    //            eventAddressLabel.topAnchor.constraint(equalTo: eventNameLabel.bottomAnchor, constant: 8.0),
-    //            eventAddressLabel.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
-    //
-    //            // event end label constraints
-    //            eventEndLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8.0),
-    //            eventEndLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8.0),
-    //
-    //            //event type label constraints
-    //            eventTypeLabel.centerXAnchor.constraint(equalTo: eventEndLabel.centerXAnchor),
-    //            eventTypeLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 8.0),
-    //            eventTypeLabel.widthAnchor.constraint(equalToConstant: 64),
-    //            eventTypeLabel.heightAnchor.constraint(equalToConstant: 64),
-    //
-    //            //directions button constraints
-    //            toggleDirectionsButton.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
-    //            toggleDirectionsButton.topAnchor.constraint(equalTo: eventAddressLabel.bottomAnchor, constant: -8.0),
-    //            toggleDirectionsButton.centerXAnchor.constraint(equalTo: eventAddressLabel.centerXAnchor),
-    //            toggleDirectionsButton.heightAnchor.constraint(equalToConstant: 30),
-    //            toggleDirectionsButton.widthAnchor.constraint(equalTo: eventAddressLabel.widthAnchor)
-    //            ].map { $0.isActive = true }
-    //    }
     func addSubviewConstraints() {
         //Cell Constraints
         _ = [
@@ -221,16 +160,24 @@ class EventTableViewCell: UITableViewCell {
             //event name label constraints
             eventNameLabel.topAnchor.constraint(equalTo: eventStartLabel.bottomAnchor, constant: 8.0),
             eventNameLabel.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
-            //eventNameLabel.heightAnchor.constraint(equalToConstant: 30),
+            eventNameLabel.trailingAnchor.constraint(equalTo: eventTypeLabel.leadingAnchor, constant: 0.0),
+            eventNameLabel.bottomAnchor.constraint(equalTo: eventAddressLabel.topAnchor, constant: 0.0),
+            eventNameLabel.widthAnchor.constraint(equalTo: eventStartLabel.widthAnchor, multiplier: 0.5),
             
             //event address label constraints
             eventAddressLabel.topAnchor.constraint(equalTo: eventNameLabel.bottomAnchor, constant: 8.0),
             eventAddressLabel.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
-            //eventAddressLabel.heightAnchor.constraint(equalToConstant: 50),
+            eventAddressLabel.heightAnchor.constraint(equalTo: eventMapView.heightAnchor, multiplier: 0.5),
+            eventAddressLabel.bottomAnchor.constraint(equalTo: toggleDirectionsButton.topAnchor, constant: 0.0),
+            eventAddressLabel.trailingAnchor.constraint(equalTo: eventTypeLabel.leadingAnchor, constant: 0.0),
+            eventAddressLabel.widthAnchor.constraint(equalTo: eventStartLabel.widthAnchor, multiplier: 0.5),
             
             // event end label constraints
             eventEndLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8.0),
             eventEndLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8.0),
+        
+            
+         
             
             //event type label constraints
             eventTypeLabel.centerXAnchor.constraint(equalTo: eventEndLabel.centerXAnchor),
@@ -242,8 +189,8 @@ class EventTableViewCell: UITableViewCell {
             toggleDirectionsButton.leadingAnchor.constraint(equalTo: eventMapView.trailingAnchor, constant: 8.0),
             toggleDirectionsButton.topAnchor.constraint(equalTo: eventAddressLabel.bottomAnchor, constant: -8.0),
             toggleDirectionsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8.0),
-            toggleDirectionsButton.heightAnchor.constraint(equalToConstant: 25),
-            toggleDirectionsButton.widthAnchor.constraint(equalTo: eventAddressLabel.widthAnchor)
+            toggleDirectionsButton.heightAnchor.constraint(equalToConstant: 25)
+            
             ].map { $0.isActive = true }
     }
     

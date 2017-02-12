@@ -14,16 +14,6 @@ import CoreLocation
 import MapKit
 import FZAccordionTableView
 
-protocol FZAccordionTableViewDelegate: NSObjectProtocol {
-    
-    func tableView(_ tableView: FZAccordionTableView, canInteractWithHeaderAtSection section: Int) -> Bool
-    func tableView(_ tableView: FZAccordionTableView, willOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?)
-    func tableView(_ tableView: FZAccordionTableView, didOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?)
-    
-    func tableView(_ tableView: FZAccordionTableView, willCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?)
-    func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?)
-    
-}
 
 class EventViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NSFetchedResultsControllerDelegate, CLLocationManagerDelegate, MKMapViewDelegate {
     
@@ -34,7 +24,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
-    var todaysEvents = [CLLocationCoordinate2D]()
+    var todaysEventsLocations = [CLLocationCoordinate2D]()
     
     var toggleDirectionsButtonIsSelected: Bool!
     
@@ -74,7 +64,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         let tb = FZAccordionTableView()
         tb.translatesAutoresizingMaskIntoConstraints = false
         return tb
-       
+        
     }()
     let cellIdentifier = "eventCellIdentifier"
     
@@ -88,11 +78,15 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     var directionsShouldBeShown = false
     var directionsArr = [String]()
+    
+    
     // MARK: - View life cycle
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-       
+        
         
         //toggleDirectionsButtonIsSelected = false
         tableView.register(UINib(nibName: "AccordionHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: AccordionHeaderView.accordionHeaderViewReuseIdentifier)
@@ -104,8 +98,15 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         locationManager.delegate = self
         tableView.separatorStyle = .none
         tableView.allowMultipleSectionsOpen = false
+        tableView.keepOneSectionOpen = false
+        //tableView.initialOpenSections = [0]
+        //        tableView.enableAnimationFix = true
         
-        if todaysEvents.count > 0 {
+        
+        
+        
+        
+        if todaysEventsLocations.count > 0 {
             didAddTodaysEvents = true
         }
         
@@ -129,7 +130,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         tableView.estimatedRowHeight = 175
         
         
-  
+        
         
         // Nav Bar Button Item (add event)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
@@ -149,13 +150,12 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         
         
-        
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 175//Choose your custom row height
     }
-
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
@@ -168,7 +168,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         
         print("LOCATIONARR: \(locationArr.count)")
-        print("TODAYS LOCATION: \(todaysEvents.count)")
+        print("TODAYS LOCATION: \(todaysEventsLocations.count)")
         
         //        if locationArr.count == 2 {
         //
@@ -265,72 +265,19 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     func numberOfSections(in tableView: UITableView) -> Int {
         
         if let sections = controller.sections {
-//            tableView.
             return sections.count
         }
-        return 0
+        return 1
     }
     
     var didAddTodaysEvents = false
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        let section = tableView.
-        mapView.removeAnnotations(mapView.annotations)
         if let sections = controller.sections {
             let info = sections[section]
-            let rowCountInSection = info.numberOfObjects
-            
-            
-            //Add pins to main map based on section (date in focus)
-            print("ROWS: \(rowCountInSection) IN SECTION: \(info.name) STARTINDEX: \(sections.startIndex)")
-            dump("OBJECTS: \(info.objects as? [Event])")
-            //sections.forEach { (section) in
-            if section == sections.startIndex {
-                if let eventsArr = info.objects as? [Event] {
-                    print("EVENTSARRCOUNT: \(eventsArr.count), TODAYS EVENT COUNT: \(todaysEvents.count)")
-                    
-                    
-                    // var eventIndex = 2
-                    for event in eventsArr {
-                        
-                        let eventLocationCoordinates = CLLocationCoordinate2DMake(event.latitude, event.longitude)
-                        let placemark = MKPlacemark(coordinate: eventLocationCoordinates)
-                        let eventAnnotation = MKPointAnnotation()
-                        
-                        eventAnnotation.coordinate = placemark.coordinate
-                        eventAnnotation.title = event.event
-                        eventAnnotation.subtitle = event.type
-                        
-                        mapView.addAnnotation(eventAnnotation)
-                        
-                        //mapLocations.updateValue(eventAnnotation.coordinate, forKey: eventIndex)
-                        
-                        //todaysEvents.append(eventAnnotation.coordinate)
-                        //locationArr.append(eventAnnotation.coordinate)
-                        //eventIndex += 1
-                        
-                        //                        let span = MKCoordinateSpanMake(0.05, 0.05)
-                        //                        let region = MKCoordinateRegionMake(placemark.coordinate, span)
-                        //                        mapView.setRegion(region, animated: true)
-                        
-                        
-                    }
-                    eventsArr.forEach({ (event) in
-                        if !didAddTodaysEvents {
-                            let eventLocationCoordinates = CLLocationCoordinate2DMake(event.latitude, event.longitude)
-                            todaysEvents.append(eventLocationCoordinates)
-                        }
-                    })
-                    didAddTodaysEvents = true
-                    
-                }
-            }
-            //}
-            //Trying to have pins per day populate on mapView
-            return rowCountInSection
-            
+            return info.numberOfObjects
         }
-        return 0
+        return 1
     }
     
     func addRoutes(_ locations: [CLLocationCoordinate2D], _ response: MKDirectionsResponse) {
@@ -347,7 +294,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //}
     }
     
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "EventCell", for: indexPath) as! EventTableViewCell
         
@@ -377,30 +324,30 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //        }
         
         
-        if indexPath.row == 0 && indexPath.section == 0 {
-            self.event = event
-            locationArr.append(annotation.coordinate)
-            todaysEvents.append(annotation.coordinate)
-            request.source = MKMapItem.forCurrentLocation()
-            request.destination = MKMapItem(placemark: placemark)
-            //request.transportType = .automobile //Use for segmented control for directions
-            request.requestsAlternateRoutes = false
-            
-            let directions = MKDirections(request: request)
-            
-            directions.calculate(completionHandler: {(response, error) in
-                guard let response = response else {
-                    print("Error getting directions")
-                    return
-                }
-                
-                if !(self.directionsReceived) {
-                    self.addRoutes(self.todaysEvents, response)
-                    self.directionsReceived = true
-                }
-            })
-            
-        }
+//        if indexPath.row == 0 && indexPath.section == 0 {
+//            self.event = event
+//            locationArr.append(annotation.coordinate)
+//            todaysEventsLocations.append(annotation.coordinate)
+//            request.source = MKMapItem.forCurrentLocation()
+//            request.destination = MKMapItem(placemark: placemark)
+//            //request.transportType = .automobile //Use for segmented control for directions
+//            request.requestsAlternateRoutes = false
+//            
+//            let directions = MKDirections(request: request)
+//            
+//            directions.calculate(completionHandler: {(response, error) in
+//                guard let response = response else {
+//                    print("Error getting directions")
+//                    return
+//                }
+//                
+//                if !(self.directionsReceived) {
+//                    self.addRoutes(self.todaysEventsLocations, response)
+//                    self.directionsReceived = true
+//                }
+//            })
+//            
+//        }
         
         let span = MKCoordinateSpanMake(0.0025, 0.0025)
         let region = MKCoordinateRegionMake(placemark.coordinate, span)
@@ -475,7 +422,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             if let eventType = event.type,
                 let eventName = event.event,
                 let eventAddress = event.address {
-                cell.eventStartLabel.text = "Starts at \(adjustedStartHourComponent):\(startMinuteComponentString) \(startAmOrPm)"
+                cell.eventStartLabel.text = "Starts at \(adjustedStartHourComponent):\(startMinuteComponentString) \(startAmOrPm))"
                 cell.eventNameLabel.text = eventName
                 cell.eventAddressLabel.text = eventAddress
                 cell.eventEndLabel.text = "Ends at \(adjustedEndHourComponent):\(endMinuteComponentString) \(endAmOrPm)"
@@ -523,42 +470,10 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             print("\(startDate)")
             print("START: \(event.eventStartTimeDescription), END: \(event.eventEndTimeDescription)")
             
-            
-            
         }
         
         return cell
     }
-    
-//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        guard let sectionInfo = controller.sections?[section] else { fatalError() }
-//       // let accordionHeader =
-//        //        if let sections = controller.sections {
-//        //            let info = sections[section]
-//        //            let rowCountInSection = info.numberOfObjects
-//        //
-//        //            //print("ROWS: \(rowCountInSection) IN SECTION: \(info.name)")
-//        //            //dump("OBJECTS: \(info.objects as? [Event])")
-//        //            if let eventsArr = info.objects as? [Event] {
-//        //                for event in eventsArr {
-//        //                    dump("EVENT: \(event)")
-//        //                }
-//        //            }
-//        let eventQuantityPerDay = sectionInfo.numberOfObjects
-//        switch eventQuantityPerDay {
-//        case eventQuantityPerDay where eventQuantityPerDay > 1:
-//           // AccordionHeaderView.headerLabelText = "\(eventQuantityPerDay) Events on \(sectionInfo.name)"
-//            return "\(eventQuantityPerDay) Events on \(sectionInfo.name)"
-//        case eventQuantityPerDay where eventQuantityPerDay == 1:
-//            //AccordionHeaderView.headerLabelText = "\(eventQuantityPerDay) Event on \(sectionInfo.name)"
-//            return "\(eventQuantityPerDay) Event on \(sectionInfo.name)"
-//        default:
-//            return sectionInfo.name
-//        }
-//        
-//    }
-    
-   
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return AccordionHeaderView.defaultAccordionHeaderViewHeight
@@ -571,10 +486,11 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
         return self.tableView(tableView, heightForHeaderInSection:section)
     }
+    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let sectionInfo = controller.sections?[section] else { fatalError() }
         guard let accordionHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: AccordionHeaderView.accordionHeaderViewReuseIdentifier) else { fatalError() }
-
+        
         let rowsInSection = sectionInfo.numberOfObjects
         let accordionSectionHeader = accordionHeaderView as? AccordionHeaderView
         switch rowsInSection {
@@ -586,7 +502,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             accordionSectionHeader?.sectionHeaderTitleLabel.text = ""
             
         }
-
+        
         return accordionHeaderView
     }
     
@@ -598,15 +514,15 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //        sho
         print("BUTTON TOUCHED IN DIDSELECT")
-//        guard let cell = tableView.cellForRow(at: indexPath) as? EventTableViewCell
-//            else { return }
-//        
-//        UIView.animate(withDuration: 0.3, animations: {
-//            tableView.beginUpdates()
-//            tableView.insertRows(at: [indexPath], with: .left)
-//            //            tableView.scrollToRow(at: indexPath, at: UITableViewScrollPosition.top, animated: true)
-//            tableView.endUpdates()
-//            
+        //        guard let cell = tableView.cellForRow(at: indexPath) as? EventTableViewCell
+        //            else { return }
+        //
+        //        UIView.animate(withDuration: 0.3, animations: {
+        //            tableView.beginUpdates()
+        //            tableView.insertRows(at: [indexPath], with: .left)
+        //            //            tableView.scrollToRow(at: indexPath, at: UITableViewScrollPosition.top, animated: true)
+        //            tableView.endUpdates()
+        //
         //})
     }
     
@@ -640,7 +556,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     }
                     
                     if !(self.directionsReceived) {
-                        self.addRoutes(self.todaysEvents, response)
+                        self.addRoutes(self.todaysEventsLocations, response)
                         self.directionsReceived = true
                     }
                 })
@@ -703,7 +619,6 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
         case .update:
             tableView.reloadSections(IndexSet(integer: sectionIndex), with: .automatic)
-            
         case .delete:
             tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
             
@@ -778,7 +693,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //Always insert as first item in dictionary
         //mapLocations.updateValue(validCurrentUserLocation.coordinate, forKey: 0)
         locationArr.insert(validCurrentUserLocation.coordinate, at: 0)
-        todaysEvents.insert(locationArr[0], at: 0) //starting point
+        todaysEventsLocations.insert(locationArr[0], at: 0) //starting point
         
         print("CURRENTLOCATION AFTERUPDATEw: \(userLocationAnnotation.coordinate)")
         //mapLocations[0] = validCurrentUserLocation.coordinate
@@ -820,6 +735,8 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     
+    
+    
 }
 
 // MARK: - <FZAccordionTableViewDelegate> -
@@ -828,21 +745,79 @@ extension EventViewController : FZAccordionTableViewDelegate {
     
     func tableView(_ tableView: FZAccordionTableView, willOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
         
-    }
-    
-    func tableView(_ tableView: FZAccordionTableView, didOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        mapView.removeAnnotations(mapView.annotations)
+        todaysEventsLocations = [CLLocationCoordinate2D]()
         
-    }
-    
-    func tableView(_ tableView: FZAccordionTableView, willCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        if let sections = controller.sections {
+            let info = sections[section]
+            let rowCountInSection = info.numberOfObjects
+            
+            //Add pins to main map based on section (date in focus)
+            print("ROWS: \(rowCountInSection) IN SECTION: \(info.name) STARTINDEX: \(sections.startIndex)")
+            dump("OBJECTS: \(info.objects as? [Event])")
+            
+            if let eventsArr = info.objects as? [Event] {
+                
+                print("EVENTSARRCOUNT: \(eventsArr.count), TODAYS EVENT COUNT: \(todaysEventsLocations.count)")
+                
+                
+                for event in eventsArr {
+                    //Add map annotation for each event listed for currently selected day
+                    let eventLocationCoordinates = CLLocationCoordinate2DMake(event.latitude, event.longitude)
+                    let placemark = MKPlacemark(coordinate: eventLocationCoordinates)
+                    let eventAnnotation = MKPointAnnotation()
+                    
+                    eventAnnotation.coordinate = placemark.coordinate
+                    eventAnnotation.title = event.event
+                    eventAnnotation.subtitle = event.type
+                    
+                    mapView.addAnnotation(eventAnnotation)
+                    
+                    //Create an array containing the location of each event in sequential order
+                    //insert users current location at beginning of location array
+                    //Calculate routes
+                    //Adjust map span to include all annotations
+                }
+                
+            }
         
-    }
-    
-    func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+                //mapLocations.updateValue(eventAnnotation.coordinate, forKey: eventIndex)
+                
+                //                        //todaysEvents.append(eventAnnotation.coordinate)
+                //                        //locationArr.append(eventAnnotation.coordinate)
+                //                        //eventIndex += 1
+                //
+                //                        //                        let span = MKCoordinateSpanMake(0.05, 0.05)
+                //                        //                        let region = MKCoordinateRegionMake(placemark.coordinate, span)
+                //                        //                        mapView.setRegion(region, animated: true)
+                //
+                //
+                //
+                //                    eventsArr.forEach({ (event) in
+                //                        if !didAddTodaysEvents {
+                //                            let eventLocationCoordinates = CLLocationCoordinate2DMake(event.latitude, event.longitude)
+                //                            todaysEvents.append(eventLocationCoordinates)
+                //                        }
+                //                    })
+                //                    didAddTodaysEvents = true
+            }
+            //
+            
+        }
         
-    }
-    
-    func tableView(_ tableView: FZAccordionTableView, canInteractWithHeaderAtSection section: Int) -> Bool {
-        return true
-    }
+        func tableView(_ tableView: FZAccordionTableView, didOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+            
+        }
+        
+        func tableView(_ tableView: FZAccordionTableView, willCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+            //remove annotations if all sections are closed
+        }
+        
+        func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+            
+        }
+        
+        func tableView(_ tableView: FZAccordionTableView, canInteractWithHeaderAtSection section: Int) -> Bool {
+            return true
+        }
 }
