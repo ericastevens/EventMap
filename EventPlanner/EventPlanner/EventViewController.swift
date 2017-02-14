@@ -120,7 +120,6 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         // TableView Register Cell
         self.tableView.register(EventTableViewCell.self, forCellReuseIdentifier: "EventCell")
-        //originally 175
         tableView.rowHeight = UITableViewAutomaticDimension
         //tableView.isSectionOpen(0)
         
@@ -673,7 +672,9 @@ extension EventViewController : FZAccordionTableViewDelegate {
                         })
                     }
                     print("EVENTSARRCOUNT: \(eventsArr.count)")
+                    
                     //Adjust map span to include all annotations
+                    mapView.showAnnotations(mapView.annotations, animated: true)
                 }
             }
         }
