@@ -24,7 +24,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
-
+    
     var toggleDirectionsButtonIsSelected: Bool!
     
     // Maps & Locations
@@ -273,7 +273,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         let eventLocationCoordinates = CLLocationCoordinate2DMake(event.latitude, event.longitude)
         let placemark = MKPlacemark(coordinate: eventLocationCoordinates)
-      
+        
         let annotation = MKPointAnnotation()
         annotation.coordinate = placemark.coordinate
         annotation.title = event.event
@@ -442,7 +442,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 mapView.remove(route.polyline)
             })
             self.directionsReceived = false
-
+            
             mapView.updateFocusIfNeeded()
         default:
             break
@@ -569,7 +569,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         userLocationAnnotation.title = "This is you"
         userLocationAnnotation.subtitle = "I see you. - Apple"
         
-     
+        
         print("CURRENTLOCATION AFTERUPDATEw: \(userLocationAnnotation.coordinate)")
         //mapLocations[0] = validCurrentUserLocation.coordinate
         
@@ -615,19 +615,17 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
 extension EventViewController : FZAccordionTableViewDelegate {
     
     func tableView(_ tableView: FZAccordionTableView, willOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
-        print("WILL OPEN SECTION")
+        print("WILL OPEN SECTION: \(section)\n")
         
         //remove annotations if all sections are closed
-        mapView.removeOverlays(mapView.overlays)
-        mapView.removeAnnotations(mapView.annotations)
-    
+        //mapView.removeOverlays(mapView.overlays)
+        //mapView.removeAnnotations(mapView.annotations)
+        
         
         if let sections = controller.sections {
             let info = sections[section]
-            let rowCountInSection = info.numberOfObjects
-            
+    
             //Add pins to main map based on section (date in focus)
-            print("ROWS: \(rowCountInSection) IN SECTION: \(info.name) STARTINDEX: \(sections.startIndex)\n")
             dump("OBJECTS: \(info.objects as? [Event])")
             
             if let eventsArr = info.objects as? [Event] {
@@ -659,10 +657,9 @@ extension EventViewController : FZAccordionTableViewDelegate {
                                 print("Error getting directions")
                                 return
                             }
-                            print("TESTING SWITCH")
                             self.directionsResponseArr.append(response)
                         })
-
+                        
                     default:
                         let previousEventLocationCoordinates = CLLocationCoordinate2DMake(eventsArr[i-1].latitude, eventsArr[i-1].longitude)
                         let previousEventPlacemark = MKPlacemark(coordinate: previousEventLocationCoordinates)
@@ -670,7 +667,6 @@ extension EventViewController : FZAccordionTableViewDelegate {
                         request.source = MKMapItem(placemark: previousEventPlacemark) //should be first element in array (first event)
                         request.destination = MKMapItem(placemark: placemark)
                         request.requestsAlternateRoutes = false
-                        print("TESTING DEFAULT SWITCH")
                         
                         let directions = MKDirections(request: request)
                         
@@ -683,43 +679,38 @@ extension EventViewController : FZAccordionTableViewDelegate {
                             
                             self.directionsResponseArr.append(response)
                         })
-
-
                     }
-                    
-                    //Create an array containing the location of each event in sequential order (locationArr)
-                 
                     print("EVENTSARRCOUNT: \(eventsArr.count)")
-            
                     //Adjust map span to include all annotations
-                }
-                
                 }
             }
             self.addRoutes(directionsResponseArr)
             print("DIRECTIONSRESPONSEARR COUNT: \(directionsResponseArr.count)")
             directionsResponseArr = [MKDirectionsResponse]()
-
-        }
-    
-        func tableView(_ tableView: FZAccordionTableView, didOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
-            print("DID OPEN SECTION")
-        }
-    
-        func tableView(_ tableView: FZAccordionTableView, willCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
-            //remove annotations if all sections are closed
-            print("WILL CLOSE SECTION")
-            mapView.removeOverlays(mapView.overlays)
-            mapView.removeAnnotations(mapView.annotations)
-            
-        }
-    
-        func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
-            print("DID CLOSE SECTION")
-            
         }
         
-        func tableView(_ tableView: FZAccordionTableView, canInteractWithHeaderAtSection section: Int) -> Bool {
-            return true
-        }
+        
+    }
+    
+    func tableView(_ tableView: FZAccordionTableView, didOpenSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        print("DID OPEN SECTION: \(section)\n")
+    }
+    
+    func tableView(_ tableView: FZAccordionTableView, willCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        //remove annotations if all sections are closed
+        print("WILL CLOSE SECTION: \(section)\n")
+        mapView.removeOverlays(mapView.overlays)
+        mapView.removeAnnotations(mapView.annotations)
+        
+    }
+    
+    func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
+        print("DID CLOSE SECTION: \(section)")
+//        mapView.removeOverlays(mapView.overlays)
+//        mapView.removeAnnotations(mapView.annotations)
+    }
+    
+    func tableView(_ tableView: FZAccordionTableView, canInteractWithHeaderAtSection section: Int) -> Bool {
+        return true
+    }
 }
