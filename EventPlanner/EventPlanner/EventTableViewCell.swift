@@ -36,8 +36,9 @@ class EventTableViewCell: UITableViewCell {
     lazy var eventNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 17, weight: UIFontWeightRegular)
+        label.textAlignment = .left
+        label.font = UIFont.systemFont(ofSize: 18, weight: UIFontWeightRegular)
+        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
@@ -69,7 +70,7 @@ class EventTableViewCell: UITableViewCell {
         label.layer.cornerRadius = 0.5 * label.bounds.size.width
 //        label.layer.contentEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         label.clipsToBounds = true
-        label.numberOfLines = 0
+     
         return label
     }()
     

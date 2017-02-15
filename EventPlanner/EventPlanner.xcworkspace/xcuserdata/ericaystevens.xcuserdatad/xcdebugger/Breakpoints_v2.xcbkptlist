@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EventPlanner/EventViewController.swift"
-            timestampString = "508804218.90179"
+            timestampString = "508829065.253844"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "653"
-            endingLineNumber = "653"
+            startingLineNumber = "759"
+            endingLineNumber = "759"
             landmarkName = "tableView(_:didOpenSection:withHeader:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -38,15 +38,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EventPlanner/EventViewController.swift"
-            timestampString = "508804218.90179"
+            timestampString = "508829065.253844"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "671"
-            endingLineNumber = "671"
+            startingLineNumber = "777"
+            endingLineNumber = "777"
             landmarkName = "tableView(_:didOpenSection:withHeader:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -54,65 +54,81 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EventPlanner/EventViewController.swift"
-            timestampString = "508804302.080328"
+            timestampString = "508829065.253844"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "679"
-            endingLineNumber = "679"
-            landmarkName = "tableView(_:didOpenSection:withHeader:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "EventPlanner/EventViewController.swift"
-            timestampString = "508804218.90179"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "623"
-            endingLineNumber = "623"
+            startingLineNumber = "729"
+            endingLineNumber = "729"
             landmarkName = "tableView(_:didOpenSection:withHeader:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "EventPlanner.EventViewController.tableView (__ObjC.FZAccordionTableView, didOpenSection : Swift.Int, withHeader : Swift.Optional&lt;__ObjC.UITableViewHeaderFooterView&gt;) -&gt; ()"
                   moduleName = "EventPlanner"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/ericaystevens/Developer/EventMap/EventPlanner/EventPlanner/EventViewController.swift"
-                  timestampString = "508803486.622444"
+                  timestampString = "508809046.368317"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "638"
-                  endingLineNumber = "638"
-                  offsetFromSymbolStart = "1483">
+                  startingLineNumber = "621"
+                  endingLineNumber = "621"
+                  offsetFromSymbolStart = "1246">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "EventPlanner.EventViewController.tableView (__ObjC.FZAccordionTableView, didOpenSection : Swift.Int, withHeader : Swift.Optional&lt;__ObjC.UITableViewHeaderFooterView&gt;) -&gt; ()"
                   moduleName = "EventPlanner"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/ericaystevens/Developer/EventMap/EventPlanner/EventPlanner/EventViewController.swift"
-                  timestampString = "508803486.624462"
+                  timestampString = "508809046.370547"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "638"
-                  endingLineNumber = "638"
-                  offsetFromSymbolStart = "1795">
+                  startingLineNumber = "621"
+                  endingLineNumber = "621"
+                  offsetFromSymbolStart = "1558">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EventPlanner/AddEventViewController.swift"
+            timestampString = "508810138.699785"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "413"
+            endingLineNumber = "413"
+            landmarkName = "dropPinZoomIn(placemark:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EventPlanner/EventLocationSearchTableViewController.swift"
+            timestampString = "508810435.751964"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
+            landmarkName = "tableView(_:didSelectRowAt:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

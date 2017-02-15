@@ -139,6 +139,7 @@ class EventLocationSearchTableViewController: UITableViewController, UISearchRes
         cell.textLabel?.text = selectedLocation.name
         cell.detailTextLabel?.text = parseAddress(selectedItem: selectedLocation)
         
+        
         print("ADDRESS: \(parseAddress(selectedItem: selectedLocation))")
         return cell
     }

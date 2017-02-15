@@ -117,7 +117,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         tf.returnKeyType = .done
         tf.textAlignment = .center
         //still implementing the selector in the target action method below
-        tf.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEndOnExit)
+        tf.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEnd)
         return tf
     }()
     
@@ -297,7 +297,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
     
     func doneButtonPressed() {
         
-     
         //ok/save event action button pressed
         //check for empty values before saving to context
         if (self.enterStartTextField.text?.characters.count)! > 0 &&
@@ -324,24 +323,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
                     newEvent.city = self.eventCity
                     newEvent.type = self.eventType
                     
-                    //get route from current location to this one
-                    //                    let eventLocationCoordinates = CLLocationCoordinate2DMake(newEvent.latitude, newEvent.longitude)
-                    //                    let placemark = MKPlacemark(coordinate: eventLocationCoordinates)
-                    //
-                    //                    self.eventVC.request.source = MKMapItem.forCurrentLocation()
-                    //                    self.eventVC.request.destination = MKMapItem(placemark: placemark)
-                    //                    self.eventVC.request.requestsAlternateRoutes = false
-                    //
-                    //                    let directions = MKDirections(request: self.eventVC.request)
-                    //
-                    //                    directions.calculate(completionHandler: {(response, error) in
-                    //
-                    //                        if error != nil {
-                    //                            print("Error getting directions")
-                    //                        } else {
-                    //                            self.eventVC.showRoute(response!)
-                    //                        }
-                    //                    })
                 }
             }
             do {

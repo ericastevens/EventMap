@@ -24,9 +24,9 @@
 
 /* Begin PBXFileReference section */
 		0D31F7F7FD88288D7F9A5C66 /* Pods-EventPlanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EventPlanner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EventPlanner/Pods-EventPlanner.debug.xcconfig"; sourceTree = "<group>"; };
-		3A0F875C1E4FFFEC00E78E82 /* AccordionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccordionHeaderView.swift; sourceTree = "<group>"; };
-		3A0F875E1E5000F200E78E82 /* FZAccordionTableView-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FZAccordionTableView-Bridging-Header.h"; sourceTree = "<group>"; };
-		3AA224081E2D1650006BD806 /* AccordionHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccordionHeaderView.xib; sourceTree = "<group>"; };
+		3A0F875C1E4FFFEC00E78E82 /* AccordionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AccordionHeaderView.swift; path = ../AccordionHeaderView.swift; sourceTree = "<group>"; };
+		3A0F875E1E5000F200E78E82 /* FZAccordionTableView-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "FZAccordionTableView-Bridging-Header.h"; path = "../FZAccordionTableView-Bridging-Header.h"; sourceTree = "<group>"; };
+		3AA224081E2D1650006BD806 /* AccordionHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AccordionHeaderView.xib; path = ../AccordionHeaderView.xib; sourceTree = "<group>"; };
 		3AAD60FD1E2CA6B0006A8970 /* EventPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EventPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AAD61001E2CA6B0006A8970 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3AAD61081E2CA6B0006A8970 /* EventPlanner.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EventPlanner.xcdatamodel; sourceTree = "<group>"; };
@@ -63,12 +63,19 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		3AAD60F41E2CA6B0006A8970 = {
+		3A0F875F1E53CD8900E78E82 /* Cocoapods */ = {
 			isa = PBXGroup;
 			children = (
 				3A0F875E1E5000F200E78E82 /* FZAccordionTableView-Bridging-Header.h */,
 				3A0F875C1E4FFFEC00E78E82 /* AccordionHeaderView.swift */,
 				3AA224081E2D1650006BD806 /* AccordionHeaderView.xib */,
+			);
+			name = Cocoapods;
+			sourceTree = "<group>";
+		};
+		3AAD60F41E2CA6B0006A8970 = {
+			isa = PBXGroup;
+			children = (
 				3AAD60FF1E2CA6B0006A8970 /* EventPlanner */,
 				3AAD60FE1E2CA6B0006A8970 /* Products */,
 				A3DB0095A6AB3B825258545C /* Pods */,
@@ -87,6 +94,7 @@
 		3AAD60FF1E2CA6B0006A8970 /* EventPlanner */ = {
 			isa = PBXGroup;
 			children = (
+				3A0F875F1E53CD8900E78E82 /* Cocoapods */,
 				3AAD61161E2CA87E006A8970 /* Core Data */,
 				3AAD611F1E2CA96E006A8970 /* Controllers */,
 				3AAD61241E2CA9E2006A8970 /* Models */,

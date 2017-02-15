@@ -51,11 +51,10 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     let userLocationAnnotation: MKPointAnnotation = MKPointAnnotation()
     let request = MKDirectionsRequest()
     var routes = [MKRoute]()
-    var directionsResponseArr = [MKDirectionsResponse]()
     var polylineRenderer = MKPolylineRenderer()
     var directionsReceived = false
-    
-    
+    var currentSection = Int()
+
     // Views And Managers
     let eventCell = EventTableViewCell()
     
@@ -76,17 +75,13 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     
-    var directionsShouldBeShown = false
+//    var directionsShouldBeShown = false
     var directionsArr = [String]()
     
-    
     // MARK: - View life cycle
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
         
         //toggleDirectionsButtonIsSelected = false
         tableView.register(UINib(nibName: "AccordionHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: AccordionHeaderView.accordionHeaderViewReuseIdentifier)
@@ -100,14 +95,9 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         tableView.allowMultipleSectionsOpen = false
         tableView.keepOneSectionOpen = false
         //tableView.initialOpenSections = [0]
-        //        tableView.enableAnimationFix = true
-        
-        
-        
-        
-        
-        
-        
+//        tableView.enableAnimationFix = true
+        //tableView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+    
         // Setup views and layout
         setupViewHierarchy()
         setupConstraints()
@@ -122,11 +112,8 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.tableView.register(EventTableViewCell.self, forCellReuseIdentifier: "EventCell")
         tableView.rowHeight = UITableViewAutomaticDimension
         //tableView.isSectionOpen(0)
-        
+    
         tableView.estimatedRowHeight = 175
-        
-        
-        
         
         // Nav Bar Button Item (add event)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
@@ -142,16 +129,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                                                 cacheName: nil)
         controller.delegate = self
         try! controller.performFetch()
-        
-        
-        
-        
     }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
-        return 175//Choose your custom row height
-    }
-    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
@@ -191,17 +169,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             navVC.pushViewController(addEventViewController, animated: true)
         }
     }
-    
-    //    func showRoute(_ response: MKDirectionsResponse) {
-    //        for route in response.routes {
-    //            mapView.add(route.polyline, level: MKOverlayLevel.aboveRoads)
-    //            routes.append(route)
-    //            for step in route.steps {
-    //                print("DIRECTIONS \(step.instructions)")
-    //            }
-    //        }
-    //    }
-    
+
     func getAccessOfLocation() {
         // 1. Check authorization status:
         switch CLLocationManager.authorizationStatus() {
@@ -214,7 +182,17 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
-    
+    func addRoute(_ response: MKDirectionsResponse) {
+        for route in response.routes {
+            mapView.add(route.polyline, level: MKOverlayLevel.aboveRoads)
+            routes.append(route)
+            print("ROUTEARR: \(routes)")
+            for step in route.steps {
+                print("DIRECTIONS \(step.instructions)")
+                directionsArr.append(step.instructions)
+            }
+        }
+    }
     
     // MARK: - TableView Delegate Methods
     
@@ -226,28 +204,13 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return 1
     }
     
-    var didAddTodaysEvents = false
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let sections = controller.sections {
             let info = sections[section]
+            
             return info.numberOfObjects
         }
         return 1
-    }
-    
-    
-    
-    func addRoute(_ response: MKDirectionsResponse) {
-        for route in response.routes {
-            mapView.add(route.polyline, level: MKOverlayLevel.aboveRoads)
-            routes.append(route)
-            print("ROUTEARR: \(routes)")
-            for step in route.steps {
-                print("DIRECTIONS \(step.instructions)")
-                directionsArr.append(step.instructions)
-            }
-        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -387,6 +350,11 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return AccordionHeaderView.defaultAccordionHeaderViewHeight
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+    {
+        return 175//Choose your custom row height
+    }
+    
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return self.tableView(tableView, heightForRowAt: indexPath)
     }
@@ -430,12 +398,147 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             let object = controller.object(at: indexPath)
             context.delete(object)
             try! context.save()
-            routes.forEach({ (route) in
-                mapView.remove(route.polyline)
-            })
-            self.directionsReceived = false
+            mapView.removeAnnotations(mapView.annotations)
+            mapView.removeOverlays(mapView.overlays)
+            if let sections = controller.sections {
+                let info = sections[currentSection]
+                
+                //Add pins to main map based on section (date in focus)
+                dump("OBJECTS: \(info.objects as? [Event])")
+                
+                if let eventsArr = info.objects as? [Event] {
+                    print("DID OPEN SECTION: \(currentSection), EVENTS COUNT: \(eventsArr.count)\n")
+                    
+                    
+                    for i in 0..<eventsArr.count {
+                        //Add map annotation for each event listed for currently selected day
+                        let eventLocationCoordinates = CLLocationCoordinate2DMake(eventsArr[i].latitude, eventsArr[i].longitude)
+                        let placemark = MKPlacemark(coordinate: eventLocationCoordinates)
+                        let eventAnnotation = MKPointAnnotation()
+                        eventAnnotation.coordinate = placemark.coordinate
+                        eventAnnotation.title = eventsArr[i].event
+                        eventAnnotation.subtitle = eventsArr[i].type
+                        
+                        mapView.addAnnotation(eventAnnotation)
+                        
+                        //Calculate routes
+                        switch i {
+                        case i where i == 0: //From users location to first event
+                            request.source = MKMapItem.forCurrentLocation() //starting point, users location
+                            request.destination = MKMapItem(placemark: placemark) //should be first element in array (first event)
+                            request.requestsAlternateRoutes = false
+                            
+                            let directions = MKDirections(request: request)
+                            
+                            directions.calculate(completionHandler: {(response, error) in
+                                guard let response = response else {
+                                    print("Error getting directions")
+                                    return
+                                }
+                                //Adds polyline overlay for route
+                                self.addRoute(response)
+                            })
+                        default: //From first event to next event
+                            let previousEventLocationCoordinates = CLLocationCoordinate2DMake(eventsArr[i-1].latitude, eventsArr[i-1].longitude)
+                            let previousEventPlacemark = MKPlacemark(coordinate: previousEventLocationCoordinates)
+                            
+                            request.source = MKMapItem(placemark: previousEventPlacemark) //should be first element in array (first event)
+                            request.destination = MKMapItem(placemark: placemark)
+                            request.requestsAlternateRoutes = false
+                            
+                            let directions = MKDirections(request: request)
+                            
+                            directions.calculate(completionHandler: {(response, error) in
+                                guard let response = response else {
+                                    print("Error getting directions")
+                                    return
+                                }
+                                //Adds polyline overlay for route
+                                self.addRoute(response)
+                            })
+                        }
+                        print("EVENTSARRCOUNT: \(eventsArr.count)")
+                        
+                        //Adjust map span to include all annotations
+                        mapView.showAnnotations(mapView.annotations, animated: true)
+                    }
+                }
+            }
+
             
             mapView.updateFocusIfNeeded()
+            
+        //case .insert:
+//            let object = controller.object(at: indexPath)
+//            context.insert(object)
+//            try! context.save()
+//            mapView.removeAnnotations(mapView.annotations)
+//            mapView.removeOverlays(mapView.overlays)
+//            if let sections = controller.sections {
+//                let info = sections[currentSection]
+//                
+//                //Add pins to main map based on section (date in focus)
+//                dump("OBJECTS: \(info.objects as? [Event])")
+//                
+//                if let eventsArr = info.objects as? [Event] {
+//                    print("DID OPEN SECTION: \(currentSection), EVENTS COUNT: \(eventsArr.count)\n")
+//                    
+//                    
+//                    for i in 0..<eventsArr.count {
+//                        //Add map annotation for each event listed for currently selected day
+//                        let eventLocationCoordinates = CLLocationCoordinate2DMake(eventsArr[i].latitude, eventsArr[i].longitude)
+//                        let placemark = MKPlacemark(coordinate: eventLocationCoordinates)
+//                        let eventAnnotation = MKPointAnnotation()
+//                        eventAnnotation.coordinate = placemark.coordinate
+//                        eventAnnotation.title = eventsArr[i].event
+//                        eventAnnotation.subtitle = eventsArr[i].type
+//                        
+//                        mapView.addAnnotation(eventAnnotation)
+//                        
+//                        //Calculate routes
+//                        switch i {
+//                        case i where i == 0: //From users location to first event
+//                            request.source = MKMapItem.forCurrentLocation() //starting point, users location
+//                            request.destination = MKMapItem(placemark: placemark) //should be first element in array (first event)
+//                            request.requestsAlternateRoutes = false
+//                            
+//                            let directions = MKDirections(request: request)
+//                            
+//                            directions.calculate(completionHandler: {(response, error) in
+//                                guard let response = response else {
+//                                    print("Error getting directions")
+//                                    return
+//                                }
+//                                //Adds polyline overlay for route
+//                                self.addRoute(response)
+//                            })
+//                        default: //From first event to next event
+//                            let previousEventLocationCoordinates = CLLocationCoordinate2DMake(eventsArr[i-1].latitude, eventsArr[i-1].longitude)
+//                            let previousEventPlacemark = MKPlacemark(coordinate: previousEventLocationCoordinates)
+//                            
+//                            request.source = MKMapItem(placemark: previousEventPlacemark) //should be first element in array (first event)
+//                            request.destination = MKMapItem(placemark: placemark)
+//                            request.requestsAlternateRoutes = false
+//                            
+//                            let directions = MKDirections(request: request)
+//                            
+//                            directions.calculate(completionHandler: {(response, error) in
+//                                guard let response = response else {
+//                                    print("Error getting directions")
+//                                    return
+//                                }
+//                                //Adds polyline overlay for route
+//                                self.addRoute(response)
+//                            })
+//                        }
+//                        print("EVENTSARRCOUNT: \(eventsArr.count)")
+//                        
+//                        //Adjust map span to include all annotations
+//                        mapView.showAnnotations(mapView.annotations, animated: true)
+//                    }
+//                }
+//            }
+//            mapView.updateFocusIfNeeded()
         default:
             break
         }
@@ -490,6 +593,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         switch type {
         case .insert:
             tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+            
         case .update:
             tableView.reloadSections(IndexSet(integer: sectionIndex), with: .automatic)
         case .delete:
@@ -617,6 +721,8 @@ extension EventViewController : FZAccordionTableViewDelegate {
         if let sections = controller.sections {
             let info = sections[section]
             
+            self.currentSection = section
+            
             //Add pins to main map based on section (date in focus)
             dump("OBJECTS: \(info.objects as? [Event])")
             
@@ -685,6 +791,10 @@ extension EventViewController : FZAccordionTableViewDelegate {
         //remove annotations if all sections are closed
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
+        
+        //reset mapView
+        let coordinateRegion = MKCoordinateRegionMakeWithDistance(userLocationAnnotation.coordinate, 8000, 8000)
+        mapView.setRegion(coordinateRegion, animated: true)
     }
     
     func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
