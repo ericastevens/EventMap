@@ -95,8 +95,8 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         tableView.allowMultipleSectionsOpen = false
         tableView.keepOneSectionOpen = false
         //tableView.initialOpenSections = [0]
-//        tableView.enableAnimationFix = true
-        //tableView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+//
+        
     
         // Setup views and layout
         setupViewHierarchy()
@@ -268,6 +268,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         if let sections = controller.sections {
             let info = sections[section]
             
+           
             return info.numberOfObjects
         }
         return 1
@@ -463,82 +464,8 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             print("DID OPEN SECTION: \(currentSection)\n")
                     
             drawRoutesAndAddAnnationsForEvents()
-
-
             
             mapView.updateFocusIfNeeded()
-            
-        //case .insert:
-//            let object = controller.object(at: indexPath)
-//            context.insert(object)
-//            try! context.save()
-//            mapView.removeAnnotations(mapView.annotations)
-//            mapView.removeOverlays(mapView.overlays)
-//            if let sections = controller.sections {
-//                let info = sections[currentSection]
-//                
-//                //Add pins to main map based on section (date in focus)
-//                dump("OBJECTS: \(info.objects as? [Event])")
-//                
-//                if let eventsArr = info.objects as? [Event] {
-//                    print("DID OPEN SECTION: \(currentSection), EVENTS COUNT: \(eventsArr.count)\n")
-//                    
-//                    
-//                    for i in 0..<eventsArr.count {
-//                        //Add map annotation for each event listed for currently selected day
-//                        let eventLocationCoordinates = CLLocationCoordinate2DMake(eventsArr[i].latitude, eventsArr[i].longitude)
-//                        let placemark = MKPlacemark(coordinate: eventLocationCoordinates)
-//                        let eventAnnotation = MKPointAnnotation()
-//                        eventAnnotation.coordinate = placemark.coordinate
-//                        eventAnnotation.title = eventsArr[i].event
-//                        eventAnnotation.subtitle = eventsArr[i].type
-//                        
-//                        mapView.addAnnotation(eventAnnotation)
-//                        
-//                        //Calculate routes
-//                        switch i {
-//                        case i where i == 0: //From users location to first event
-//                            request.source = MKMapItem.forCurrentLocation() //starting point, users location
-//                            request.destination = MKMapItem(placemark: placemark) //should be first element in array (first event)
-//                            request.requestsAlternateRoutes = false
-//                            
-//                            let directions = MKDirections(request: request)
-//                            
-//                            directions.calculate(completionHandler: {(response, error) in
-//                                guard let response = response else {
-//                                    print("Error getting directions")
-//                                    return
-//                                }
-//                                //Adds polyline overlay for route
-//                                self.addRoute(response)
-//                            })
-//                        default: //From first event to next event
-//                            let previousEventLocationCoordinates = CLLocationCoordinate2DMake(eventsArr[i-1].latitude, eventsArr[i-1].longitude)
-//                            let previousEventPlacemark = MKPlacemark(coordinate: previousEventLocationCoordinates)
-//                            
-//                            request.source = MKMapItem(placemark: previousEventPlacemark) //should be first element in array (first event)
-//                            request.destination = MKMapItem(placemark: placemark)
-//                            request.requestsAlternateRoutes = false
-//                            
-//                            let directions = MKDirections(request: request)
-//                            
-//                            directions.calculate(completionHandler: {(response, error) in
-//                                guard let response = response else {
-//                                    print("Error getting directions")
-//                                    return
-//                                }
-//                                //Adds polyline overlay for route
-//                                self.addRoute(response)
-//                            })
-//                        }
-//                        print("EVENTSARRCOUNT: \(eventsArr.count)")
-//                        
-//                        //Adjust map span to include all annotations
-//                        mapView.showAnnotations(mapView.annotations, animated: true)
-//                    }
-//                }
-//            }
-//            mapView.updateFocusIfNeeded()
         default:
             break
         }
@@ -612,7 +539,15 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         switch type {
         case .insert:
             tableView.insertRows(at: [newIndexPath!], with: .automatic)
-            drawRoutesAndAddAnnationsForEvents() 
+            mapView.removeAnnotations(mapView.annotations)
+            mapView.removeOverlays(mapView.overlays)
+            drawRoutesAndAddAnnationsForEvents()
+            currentSection = (newIndexPath?.section)!
+            if self.tableView.isSectionOpen(currentSection) == false {
+               // self.tableView.toggleSection(currentSection)
+                drawRoutesAndAddAnnationsForEvents()
+
+            }
         case .delete:
             tableView.deleteRows(at: [indexPath!], with: .automatic)
         case .update:

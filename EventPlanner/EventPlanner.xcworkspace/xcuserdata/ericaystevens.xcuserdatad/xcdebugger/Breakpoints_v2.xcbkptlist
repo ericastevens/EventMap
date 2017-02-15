@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EventPlanner/EventViewController.swift"
-            timestampString = "508833724.876446"
+            timestampString = "508837262.598819"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "721"
-            endingLineNumber = "721"
+            startingLineNumber = "656"
+            endingLineNumber = "656"
             landmarkName = "tableView(_:didOpenSection:withHeader:)"
             landmarkType = "7">
             <Locations>
