@@ -29,10 +29,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
             
             enterEventInfoLabel.text = eventAddress
             enterEventInfoLabel.font = UIFont.systemFont(ofSize: 20, weight: UIFontWeightThin)
-            
-            //            if eventAddress.characters.last == "," {
-            //                eventAddress.characters.removeLast()
-            //            }
         }
     }
     var eventCity = ""
@@ -116,7 +112,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         tf.keyboardType = .default
         tf.returnKeyType = .done
         tf.textAlignment = .center
-        //still implementing the selector in the target action method below
         tf.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEnd)
         return tf
     }()
@@ -130,13 +125,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         }
         
     }
-    //    func eventNameEntered(sender: UITextField) {
-    //        if let eventName = sender.text {
-    //            self.eventName = eventName
-    //            print("EVENTNAME: \(eventName)")
-    //        }
-    //    }
-    
+ 
     lazy var enterStartLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -272,7 +261,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         
         locationManager.delegate = self
         
-        //still implementing the selector in the target action method below
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(AddEventViewController.doneButtonPressed))
         
         
@@ -360,6 +348,8 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UIPickerVie
             let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             someFieldsBlankAlert.addAction(okAction)
             self.present(someFieldsBlankAlert, animated: true, completion: nil)
+            
+            //add a guard for missing address
         }
         
     }
