@@ -74,8 +74,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return appDelegate.persistentContainer.viewContext
     }
     
-   
-    
+
 //    var directionsShouldBeShown = false
     var directionsArr = [String]()
     
@@ -272,6 +271,11 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         mapView.setRegion(coordinateRegion, animated: true)
     }
     
+    func removeMapAnnotationsAndOverlays() {
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+    }
+
     // MARK: - TableView Delegate Methods
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -485,24 +489,21 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     resetMapViewToUserLocation()
                     break
                 }
-                let info = sections[currentSection] //crashes here trying to delete only event in another day
-                if let rows = info.objects {
-                    //when there is one or more section and section has one event,
-                    if rows.count == 1 && indexPath.section > 0 { //if it is not the first section
-                        //activate and show previous section
-                        currentSection = currentSection - 1
-                        self.tableView.toggleSection(currentSection)
-                        removeMapAnnotationsAndOverlays()
-                        drawRoutesAndAddAnnationsForEvents()
-                    }
-                    else {
-                        //when there are multiple events in one section, refresh mapView and redram annotations
-                        removeMapAnnotationsAndOverlays()
-                        drawRoutesAndAddAnnationsForEvents()
-                    }
+                //when there is one or more section and section has one event,
+                if indexPath.section > 0 { //if it is not the first section
+                    //activate and show previous section
+                    currentSection = currentSection - 1
+                    self.tableView.toggleSection(currentSection)
+                    removeMapAnnotationsAndOverlays()
+                    drawRoutesAndAddAnnationsForEvents()
+                }
+                else {
+                    //when there are multiple events in one section, refresh mapView and redram annotations
+                    removeMapAnnotationsAndOverlays()
+                    drawRoutesAndAddAnnationsForEvents()
                 }
             }
-
+            
             mapView.updateFocusIfNeeded()
         default:
             break
@@ -565,10 +566,6 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         case .move:
             break
         }
-    }
-    func removeMapAnnotationsAndOverlays() {
-        mapView.removeAnnotations(mapView.annotations)
-        mapView.removeOverlays(mapView.overlays)
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
