@@ -74,6 +74,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return appDelegate.persistentContainer.viewContext
     }
     
+   
     
 //    var directionsShouldBeShown = false
     var directionsArr = [String]()
@@ -161,6 +162,13 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     
     //MARK: Methods
+    deinit {
+        //https://leafduo.com/articles/2013/04/15/nsfetchedresultscontroller-pitfall/
+        if self.controller != nil {
+            self.controller.delegate = nil
+        }
+    }
+    
     func addButtonPressed() {
         let addEventViewController = AddEventViewController()
         
@@ -254,6 +262,16 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
+    func resetMapViewToUserLocation() {
+        //remove annotations if all sections are closed
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+        
+        //reset mapView
+        let coordinateRegion = MKCoordinateRegionMakeWithDistance(userLocationAnnotation.coordinate, 8000, 8000)
+        mapView.setRegion(coordinateRegion, animated: true)
+    }
+    
     // MARK: - TableView Delegate Methods
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -261,7 +279,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         if let sections = controller.sections {
             return sections.count
         }
-        return 1
+        return 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -271,7 +289,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
            
             return info.numberOfObjects
         }
-        return 1
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -443,13 +461,14 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return accordionHeaderView
     }
     
-    
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     }
+    
+    
     
     func tableView(_ tableView: UITableView,
                    commit editingStyle: UITableViewCellEditingStyle,
@@ -459,12 +478,31 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
             let object = controller.object(at: indexPath)
             context.delete(object)
             try! context.save()
-            mapView.removeAnnotations(mapView.annotations)
-            mapView.removeOverlays(mapView.overlays)
-            print("DID OPEN SECTION: \(currentSection)\n")
-                    
-            drawRoutesAndAddAnnationsForEvents()
             
+            if let sections = controller.sections {
+                //when there are no more sections because only event has been deleted, show initial user location
+                if sections.count == 0 {
+                    resetMapViewToUserLocation()
+                    break
+                }
+                let info = sections[currentSection] //crashes here trying to delete only event in another day
+                if let rows = info.objects {
+                    //when there is one or more section and section has one event,
+                    if rows.count == 1 && indexPath.section > 0 { //if it is not the first section
+                        //activate and show previous section
+                        currentSection = currentSection - 1
+                        self.tableView.toggleSection(currentSection)
+                        removeMapAnnotationsAndOverlays()
+                        drawRoutesAndAddAnnationsForEvents()
+                    }
+                    else {
+                        //when there are multiple events in one section, refresh mapView and redram annotations
+                        removeMapAnnotationsAndOverlays()
+                        drawRoutesAndAddAnnationsForEvents()
+                    }
+                }
+            }
+
             mapView.updateFocusIfNeeded()
         default:
             break
@@ -520,15 +558,17 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         switch type {
         case .insert:
             tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
-            
         case .update:
             tableView.reloadSections(IndexSet(integer: sectionIndex), with: .automatic)
         case .delete:
             tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
-            
         case .move:
             break
         }
+    }
+    func removeMapAnnotationsAndOverlays() {
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
@@ -538,15 +578,22 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     newIndexPath: IndexPath?) {
         switch type {
         case .insert:
-            tableView.insertRows(at: [newIndexPath!], with: .automatic)
-            mapView.removeAnnotations(mapView.annotations)
-            mapView.removeOverlays(mapView.overlays)
-            drawRoutesAndAddAnnationsForEvents()
+            //Check if section is open or closed before inserting
             currentSection = (newIndexPath?.section)!
+            print("CURRENT SECTION: \(currentSection), OPEN?: \(self.tableView.isSectionOpen(currentSection))")
+            
             if self.tableView.isSectionOpen(currentSection) == false {
-               // self.tableView.toggleSection(currentSection)
+                
+                self.tableView.toggleSection(currentSection)
+                print("CURRENT SECTION: \(currentSection), OPEN?: \(self.tableView.isSectionOpen(currentSection))")
+                
+                tableView.insertRows(at: [newIndexPath!], with: .automatic)
+        
+            } else {
+                
+                tableView.insertRows(at: [newIndexPath!], with: .automatic)
+                removeMapAnnotationsAndOverlays()
                 drawRoutesAndAddAnnationsForEvents()
-
             }
         case .delete:
             tableView.deleteRows(at: [indexPath!], with: .automatic)
@@ -555,7 +602,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         case .move:
             tableView.moveRow(at: indexPath!, to: newIndexPath!)
         }
-        tableView.reloadData()
+        self.tableView.reloadData()
         
     }
     
@@ -660,13 +707,7 @@ extension EventViewController : FZAccordionTableViewDelegate {
     
     func tableView(_ tableView: FZAccordionTableView, willCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
         print("WILL CLOSE SECTION: \(section)\n")
-        //remove annotations if all sections are closed
-        mapView.removeAnnotations(mapView.annotations)
-        mapView.removeOverlays(mapView.overlays)
-        
-        //reset mapView
-        let coordinateRegion = MKCoordinateRegionMakeWithDistance(userLocationAnnotation.coordinate, 8000, 8000)
-        mapView.setRegion(coordinateRegion, animated: true)
+        resetMapViewToUserLocation()
     }
     
     func tableView(_ tableView: FZAccordionTableView, didCloseSection section: Int, withHeader header: UITableViewHeaderFooterView?) {
