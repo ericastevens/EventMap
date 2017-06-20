@@ -222,7 +222,20 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                         request.source = MKMapItem.forCurrentLocation() //starting point, users location
                         request.destination = MKMapItem(placemark: placemark) //should be first element in array (first event)
                         request.requestsAlternateRoutes = false
+                        request.transportType = .automobile
                         
+                        //Calculate distance
+                        let userLocationMapPoint = MKMapPointForCoordinate(userLocationAnnotation.coordinate)
+                        let destinationMapPoint = MKMapPointForCoordinate(placemark.coordinate)
+                
+                        print("DISTANCE: \(MKMetersBetweenMapPoints(userLocationMapPoint, destinationMapPoint))\n")
+                        
+                        let distanceBetweenUserLocationAndFirstEventInMeters = MKMetersBetweenMapPoints(userLocationMapPoint, destinationMapPoint)
+                        let distanceBetweenUserLocationAndFirstEventInMiles = convertMetersToMiles(distanceBetweenUserLocationAndFirstEventInMeters)
+                        
+                        print("DISTANCE: \(distanceBetweenUserLocationAndFirstEventInMiles) IN MILES\n")
+                        
+                        //get directions
                         let directions = MKDirections(request: request)
                         
                         directions.calculate(completionHandler: {(response, error) in
@@ -233,6 +246,16 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                             //Adds polyline overlay for route
                             self.addRoute(response)
                         })
+                        
+//                        //calcuate ETA
+//                        directions.calculateETA(completionHandler: { (response, error) in
+//                            guard let response = response else {
+//                                print("Error getting ETA")
+//                                return
+//                            }
+//                            
+//                            print("ETA: \(response)")
+//                        })
                     default: //From first event to next event
                         let previousEventLocationCoordinates = CLLocationCoordinate2DMake(eventsArr[i-1].latitude, eventsArr[i-1].longitude)
                         let previousEventPlacemark = MKPlacemark(coordinate: previousEventLocationCoordinates)
@@ -240,17 +263,45 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                         request.source = MKMapItem(placemark: previousEventPlacemark) //should be first element in array (first event)
                         request.destination = MKMapItem(placemark: placemark)
                         request.requestsAlternateRoutes = false
+                        request.transportType = .automobile
                         
+                        //calculate distance
+                        let sourceMapPoint = MKMapPointForCoordinate(placemark.coordinate)
+                        let destinationMapPoint = MKMapPointForCoordinate(previousEventLocationCoordinates)
+                        
+                        
+                        print("DISTANCE: \(MKMetersBetweenMapPoints(sourceMapPoint, destinationMapPoint))in METERS\n")
+                        let distanceBetweenEventsInMeters = MKMetersBetweenMapPoints(sourceMapPoint, destinationMapPoint)
+                        let distanceBetweenEventsInMiles = convertMetersToMiles(distanceBetweenEventsInMeters)
+                        
+                        print("DISTANCE: \(distanceBetweenEventsInMiles) in MILES\n")
+        
+                        //get directions
                         let directions = MKDirections(request: request)
+                        
                         
                         directions.calculate(completionHandler: {(response, error) in
                             guard let response = response else {
                                 print("Error getting directions")
                                 return
                             }
+                            
                             //Adds polyline overlay for route
                             self.addRoute(response)
                         })
+//                        
+//                            //calcuate ETA
+//                            directions.calculateETA(completionHandler: { (response, error) in
+//                                guard let response = response else {
+//                                    print("Error getting ETA")
+//                                    return
+//                                }
+//                                
+//                                print("ETA: \(response)")
+//                            })
+//                        
+                        
+//
                     }
                     print("EVENTSARRCOUNT: \(eventsArr.count)")
                     
@@ -259,6 +310,12 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 }
             }
         }
+    }
+    
+    func convertMetersToMiles(_ m: Double) -> String {
+        let miles = m/1609.344
+        let roundedMilesString = String(format:"%.2f", miles)
+        return roundedMilesString
     }
     
     func resetMapViewToUserLocation() {
@@ -319,7 +376,7 @@ class EventViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         cell.eventMapView.addAnnotation(annotation)
         
-        let span = MKCoordinateSpanMake(0.0025, 0.0025)
+        let span = MKCoordinateSpanMake(0.002, 0.002)
         let region = MKCoordinateRegionMake(placemark.coordinate, span)
         cell.eventMapView.setRegion(region, animated: true)
         

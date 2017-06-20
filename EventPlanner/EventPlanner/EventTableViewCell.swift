@@ -27,7 +27,7 @@ class EventTableViewCell: UITableViewCell {
         mapView.isZoomEnabled = false
         mapView.showsTraffic = true
         mapView.showsBuildings = true
-        mapView.mapType = .standard
+        mapView.mapType = .hybridFlyover
         mapView.layer.cornerRadius = 0.5 * mapView.bounds.size.width
         mapView.clipsToBounds = true
         return mapView
@@ -48,6 +48,7 @@ class EventTableViewCell: UITableViewCell {
         label.textAlignment = .center
         label.backgroundColor = UIColor.lightGray.withAlphaComponent(0.7)
         label.textColor = .white
+        //label.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title1)
         label.font = UIFont.systemFont(ofSize: 20, weight: UIFontWeightLight)
         return label
     }()
@@ -202,6 +203,8 @@ class EventTableViewCell: UITableViewCell {
         //EventViewController.tableView(<#T##EventViewController#>)
         
     }
+    
+    
     
 }
 
